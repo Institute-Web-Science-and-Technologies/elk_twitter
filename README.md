@@ -15,3 +15,7 @@ Twitter fetcher and monitoring using the ELK stack (Elasticsearch, Logstash, Kib
 4. Create a .env file based on the [.env.example](.env.example) and copy your twitter app keys.
 5. On a terminal run `docker-compose up` *(Or `docker-compose up -d` for detach mode)*
 6. Navigate into [Kibana](http://localhost:5601) *(http://localhost:5601)*
+
+
+### WARNING!!!
+For Linux servers, follow these instructions in [production mode](https://www.elastic.co/guide/en/elasticsearch/reference/current/docker.html)
