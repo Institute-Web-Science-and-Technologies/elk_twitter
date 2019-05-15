@@ -3,34 +3,42 @@ version: '3'
 services:
   elasticsearch:
     image: docker.elastic.co/elasticsearch/elasticsearch-oss:6.2.2
+    user: "1000:1000"
     volumes:
       - ./elasticsearch/config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml:ro
-      - twitter_data:/usr/share/elasticsearch/data
+      - twitter_data:/usr/share/elasticsearch/data 
     ports:
       - 9200:9200
       - 9300:9300
     environment:
-      ES_JAVA_OPTS: "-Xmx256m -Xms256m"
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS= -Xmx2g -Xms2g"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
     networks:
       - elk_twitter
+    restart: always    
   
   logstash:
     image: docker.elastic.co/logstash/logstash-oss:6.2.2
     env_file:
       - .env
+    user: root    
     volumes:
-      - ./logstash/config/logstash.yml:/usr/share/logstash/config/logstash.yml:ro
-      - ./logstash/pipeline:/usr/share/logstash/pipeline:ro
-      - ./logstash/twitter_template.json:/usr/share/logstash/twitter_template.json:ro
+      - ./logstash/config/logstash.yml:/usr/share/logstash/config/logstash.yml
+      - ./logstash/pipeline:/usr/share/logstash/pipeline
+      - ./logstash/twitter_template.json:/usr/share/logstash/twitter_template.json
     ports:
       - 5000:5000
+      - 9600:9600  
     environment:
-      LS_JAVA_OPTS: "-Xmx256m -Xms256m"
+      LS_JAVA_OPTS: "-Xmx1g -Xms1g"
     networks: 
       - elk_twitter
     depends_on:
-      - elasticsearch
-  
+      - elasticsearch 
   kibana:
     image: docker.elastic.co/kibana/kibana-oss:6.2.2
     volumes:
@@ -40,7 +48,7 @@ services:
     networks:
       - elk_twitter
     depends_on:
-      - elasticsearch
+      - elasticsearch  
 
 volumes:
   twitter_data:
@@ -48,3 +56,4 @@ volumes:
 
 networks:
   elk_twitter:
+    driver: bridge

@@ -1,8 +1,13 @@
 {
-  "index_patterns": ["twitter"],
+  "template":"twitter",
+  "index_patterns": ["twitter-*"],
   "settings": {
-    "number_of_shards": 1
-  },
+    "number_of_shards": 3,
+    "index.refresh_interval" : "30s",
+    "index.mapping.total_fields.limit":1000000,
+    "index.merge.scheduler.max_merge_count": 100,
+    "number_of_replicas": 2
+},
   "mappings" : {
     "doc" : {
       "properties" : {
@@ -85,3 +90,4 @@
     }
   }
 }
+
